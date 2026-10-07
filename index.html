@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TalkMate AI - Multilingual Chat</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app {
+            width: 95%;
+            max-width: 1100px;
+            height: 90vh;
+            background: #111827;
+            border: 1px solid #263244;
+            border-radius: 22px;
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+    
+
+        .sidebar {
+            width: 260px;
+            background: #0b1220;
+            padding: 25px;
+            border-right: 1px solid #263244;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #38bdf8;
+        }
+
+        .new-chat {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .new-chat:hover {
+            background: #1d4ed8;
+        }
+
+        .side-title {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .language-box {
+            margin-top: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            border-radius: 9px;
+            outline: none;
+        }
+
+        .features {
+            margin-top: 35px;
+        }
+
+        .features p {
+            color: #cbd5e1;
+            margin: 14px 0;
+            font-size: 14px;
+        }
+
+     
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            height: 75px;
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #263244;
+        }
+
+        .header h2 {
+            font-size: 20px;
+        }
+
+        .online {
+            color: #4ade80;
+            font-size: 13px;
+        }
+
+    
+        .chat {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 25px;
+            gap: 12px;
+        }
+
+        .avatar {
+            min-width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .ai-avatar {
+            background: #2563eb;
+        }
+
+        .user-avatar {
+            background: #475569;
+        }
+
+        .message-content {
+            max-width: 75%;
+        }
+
+        .name {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 7px;
+        }
+
+        .bubble {
+            background: #1e293b;
+            padding: 14px 17px;
+            border-radius: 5px 15px 15px 15px;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+
+        .user {
+            flex-direction: row-reverse;
+        }
+
+        .user .message-content {
+            text-align: right;
+        }
+
+        .user .bubble {
+            background: #2563eb;
+            border-radius: 15px 5px 15px 15px;
+            text-align: left;
+        }
+
+        /* INPUT */
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #263244;
+        }
+
+        .input-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1e293b;
+            padding: 8px;
+            border: 1px solid #334155;
+            border-radius: 14px;
+        }
+
+        .input-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 15px;
+            padding: 10px;
+        }
+
+        .input-box input::placeholder {
+            color: #64748b;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 10px;
+            background: #334155;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .icon-btn:hover {
+            background: #475569;
+        }
+
+        .send {
+            background: #2563eb;
+        }
+
+        .send:hover {
+            background: #1d4ed8;
+        }
+
+        .typing {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-left: 53px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 750px) {
+
+            .app {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .header {
+                padding: 0 15px;
+            }
+
+            .chat {
+                padding: 18px 12px;
+            }
+
+            .input-area {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            Talk<span>Mate</span> AI
+        </div>
+
+        <button class="new-chat" onclick="newChat()">
+            + New Chat
+        </button>
+
+        <div class="side-title">
+            LANGUAGE
+        </div>
+
+        <div class="language-box">
+            <select id="language">
+                <option value="English">🇬🇧 English</option>
+                <option value="Urdu">🇵🇰 Urdu</option>
+                <option value="Hindi">🇮🇳 Hindi</option>
+                <option value="Arabic">🇸🇦 Arabic</option>
+                <option value="Spanish">🇪🇸 Spanish</option>
+                <option value="French">🇫🇷 French</option>
+                <option value="German">🇩🇪 German</option>
+                <option value="Chinese">🇨🇳 Chinese</option>
+                <option value="Japanese">🇯🇵 Japanese</option>
+            </select>
+        </div>
+
+        <div class="features">
+
+            <div class="side-title">
+                FEATURES
+            </div>
+
+            <p>💬 Human-like Chat</p>
+            <p>🌍 Multiple Languages</p>
+            <p>🎤 Voice Input</p>
+            <p>🔊 Voice Response</p>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <header class="header">
+
+            <h2>TalkMate AI</h2>
+
+            <div class="online">
+                ● Online
+            </div>
+
+        </header>
+
+
+        <!-- CHAT -->
+
+        <section class="chat" id="chat">
+
+            <div class="message">
+
+                <div class="avatar ai-avatar">
+                    🤖
+                </div>
+
+                <div class="message-content">
+
+                    <div class="name">
+                        TalkMate AI
+                    </div>
+
+                    <div class="bubble">
+                        Hello! 👋 I'm TalkMate. You can talk with me in different languages. What would you like to talk about?
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="typing" id="typing">
+            🤖 TalkMate is typing...
+        </div>
+
+
+        <!-- INPUT -->
+
+        <div class="input-area">
+
+            <div class="input-box">
+
+                <button
+                    class="icon-btn"
+                    onclick="startVoice()"
+                    title="Voice">
+                    🎤
+                </button>
+
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Type your message..."
+                    onkeydown="handleEnter(event)"
+                >
+
+                <button
+                    class="icon-btn send"
+                    onclick="sendMessage()">
+                    ➤
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    const input = document.getElementById("messageInput");
+    const chat = document.getElementById("chat");
+    const typing = document.getElementById("typing");
+    const language = document.getElementById("language");
+
+
+    // SEND MESSAGE
+
+    function sendMessage() {
+
+        const text = input.value.trim();
+
+        if (text === "") {
+            return;
+        }
+
+        addMessage(text, "user");
+
+        input.value = "";
+
+        typing.style.display = "block";
+
+        chat.scrollTop = chat.scrollHeight;
+
+        setTimeout(() => {
+
+            typing.style.display = "none";
+
+            const reply = getReply(text);
+
+            addMessage(reply, "ai");
+
+        }, 1000);
+
+    }
+
+
+    // ADD MESSAGE
+
+    function addMessage(text, type) {
+
+        const message = document.createElement("div");
+
+        message.classList.add("message");
+
+        if (type === "user") {
+            message.classList.add("user");
+        }
+
+        message.innerHTML = `
+
+            <div class="avatar ${type === "ai" ? "ai-avatar" : "user-avatar"}">
+                ${type === "ai" ? "🤖" : "👤"}
+            </div>
+
+            <div class="message-content">
+
+                <div class="name">
+                    ${type === "ai" ? "TalkMate AI" : "You"}
+                </div>
+
+                <div class="bubble">
+                    ${text}
+                </div>
+
+            </div>
+        `;
+
+        chat.appendChild(message);
+
+        chat.scrollTop = chat.scrollHeight;
+
+    }
+
+
+    // DEMO AI REPLIES
+
+    function getReply(message) {
+
+        const lang = language.value;
+
+        message = message.toLowerCase();
+
+        if (lang === "Urdu") {
+
+            if (message.includes("hello") || message.includes("hi")) {
+                return "Assalam-o-Alaikum! 👋 Aap kaise hain? Main aap se Urdu mein baat kar sakta hoon.";
+            }
+
+            return "Bilkul! 😊 Main aap se Urdu mein naturally baat karne ki koshish karunga.";
+
+        }
+
+        if (lang === "Hindi") {
+
+            return "नमस्ते! 😊 मैं आपसे हिंदी में बात कर सकता हूँ। आप किस बारे में बात करना चाहते हैं?";
+
+        }
+
+        if (lang === "Arabic") {
+
+            return "مرحباً! 👋 يمكنني التحدث معك باللغة العربية. كيف يمكنني مساعدتك؟";
+
+        }
+
+        if (lang === "Spanish") {
+
+            return "¡Hola! 👋 Puedo hablar contigo en español. ¿Cómo estás?";
+
+        }
+
+        if (lang === "French") {
+
+            return "Bonjour ! 👋 Je peux discuter avec vous en français. Comment allez-vous ?";
+
+        }
+
+        if (lang === "German") {
+
+            return "Hallo! 👋 Ich kann mit dir auf Deutsch sprechen. Wie geht es dir?";
+
+        }
+
+        if (lang === "Chinese") {
+
+            return "你好！👋 我可以用中文和你聊天。你今天怎么样？";
+
+        }
+
+        if (lang === "Japanese") {
+
+            return "こんにちは！👋 日本語でお話しできます。今日はどうですか？";
+
+        }
+
+        // ENGLISH
+
+        if (message.includes("hello") || message.includes("hi")) {
+
+            return "Hey! 👋 Nice to meet you. How are you doing today?";
+
+        }
+
+        if (message.includes("how are you")) {
+
+            return "I'm doing great! 😊 Thanks for asking. What are you working on today?";
+
+        }
+
+        if (message.includes("name")) {
+
+            return "I'm TalkMate AI 🤖. Think of me as your friendly multilingual conversation partner.";
+
+        }
+
+        return "That's interesting! 😊 Tell me more about it. I'm listening.";
+
+    }
+
+
+    // ENTER KEY
+
+    function handleEnter(event) {
+
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+
+    }
+
+
+    // NEW CHAT
+
+    function newChat() {
+
+        chat.innerHTML = `
+
+            <div class="message">
+
+                <div class="avatar ai-avatar">
+                    🤖
+                </div>
+
+                <div class="message-content">
+
+                    <div class="name">
+                        TalkMate AI
+                    </div>
+
+                    <div class="bubble">
+                        New conversation started! 👋 What would you like to talk about?
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    // VOICE INPUT
+
+    function startVoice() {
+
+        if (!("webkitSpeechRecognition" in window)) {
+
+            alert("Voice recognition is not supported in this browser.");
+
+            return;
+
+        }
+
+        const recognition = new webkitSpeechRecognition();
+
+        recognition.lang = "en-US";
+
+        recognition.continuous = false;
+
+        recognition.interimResults = false;
+
+        recognition.start();
+
+        recognition.onresult = function(event) {
+
+            const speech =
+                event.results[0][0].transcript;
+
+            input.value = speech;
+
+            sendMessage();
+
+        };
+
+        recognition.onerror = function() {
+
+            alert("Could not understand your voice.");
+
+        };
+
+    }
+
+</script>
+
+</body>
+</html>
